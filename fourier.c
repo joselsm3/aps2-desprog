@@ -101,6 +101,24 @@ void fft_forward_2d(complex matrix[MAX_SIZE][MAX_SIZE], int width, int height) {
 }
 
 void fft_inverse_2d(complex matrix[MAX_SIZE][MAX_SIZE], int width, int height) {
+
+    for (int y = 0; y < height; y++) {
+        fft_inverse(matrix[y], width);
+    }
+
+    complex column[height];
+
+    for (int x = 0; x < width; x++) {
+        for (int y = 0; y < height; y++) {
+            column[y] = matrix[y][x];
+        }
+
+        fft_inverse(column, height);
+
+        for (int y = 0; y < height; y++) {
+            matrix[y][x] = column[y];
+        }
+    }
 }
 
 void filter(complex input[MAX_SIZE][MAX_SIZE], complex output[MAX_SIZE][MAX_SIZE], int width, int height, int flip) {
