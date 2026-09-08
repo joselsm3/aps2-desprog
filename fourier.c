@@ -36,6 +36,38 @@ void nft_inverse(complex t[], complex s[], int n) {
 }
 
 void fft(complex s[], int n, int sign) {
+    if (n == 1) {
+        return;
+    }
+
+    int half = n / 2;
+
+    complex even[half];
+    complex odd[half];
+
+    for (int k = 0; k < half; k++) {
+        even[k] = s[2 * k];
+        odd[k] = s[2 * k + 1];
+    }
+
+    fft(even, half, sign);
+    fft(odd, half, sign);
+
+    for (int k = 0; k < half; k++) {
+        double x = sign * 2 * PI * k / n;
+
+        double cosx = cos(x);
+        double sinx = sin(x);
+
+        double product_a = odd[k].a * cosx - odd[k].b * sinx;
+        double product_b = odd[k].a * sinx + odd[k].b * cosx;
+
+        s[k].a = even[k].a + product_a;
+        s[k].b = even[k].b + product_b;
+
+        s[k + half].a = even[k].a - product_a;
+        s[k + half].b = even[k].b - product_b;
+    }
 }
 
 void fft_forward(complex s[], int n) {
